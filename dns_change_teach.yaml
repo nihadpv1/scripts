@@ -1,0 +1,49 @@
+---
+- name: Update DNS servers for the VLAN connection
+  hosts: all_teachers
+  become: yes
+  tasks:
+    # Task 1: Get the VLAN connection name
+    - name: Get the VLAN connection name
+      shell: >
+        nmcli -t -f NAME,TYPE connection show |
+        grep ':vlan$' |
+        cut -d: -f1
+      register: vlan_connection
+
+    # Debug: Print the VLAN connection name
+    - name: Debug VLAN connection name
+      debug:
+        var: vlan_connection.stdout
+
+    # Task 2: Bring up the VLAN interface
+    - name: Bring up the VLAN interface
+      command: >
+        nmcli device connect tosc_teach
+      ignore_errors: yes
+      when: vlan_connection.stdout == "VLAN connection 1"
+
+    # Task 3: Set custom DNS servers for the VLAN connection
+    - name: Set custom DNS servers for the VLAN connection
+      command: >
+        nmcli connection modify "{{ vlan_connection.stdout }}"
+        ipv4.dns "192.168.50.100 8.8.8.8"
+        ipv4.ignore-auto-dns yes
+        ipv4.dns-priority -1
+
+    # Task 4: Restart the VLAN connection to apply changes
+    - name: Restart the VLAN connection to apply changes
+      command: >
+        nmcli connection up "{{ vlan_connection.stdout }}"
+      ignore_errors: yes
+
+    # Task 5: Verify DNS settings
+    - name: Verify DNS settings
+      shell: >
+        resolvectl status | grep 'DNS Servers'
+      register: dns_output
+
+    # Debug: Print the DNS settings
+    - name: Debug DNS settings
+      debug:
+        var: dns_output.stdout
