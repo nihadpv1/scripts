@@ -1,3 +1,23 @@
+/**
+ * Updated Google Apps Script for moving student records to the Transfer Certificate (TC) sheet.
+ *
+ * This version improves on the previous script by using the header names instead of column indexes. This
+ * approach makes the script more flexible and less prone to breaking when column positions change.
+ * It triggers on edits made to the main sheet and moves student records to the TC sheet based on matching
+ * column header names, making it more dynamic.
+ *
+ * Key Features:
+ * - Listens for edits in the main sheet.
+ * - Moves data from the main sheet to the TC sheet based on column headers, not fixed indexes.
+ * - Allows for more flexibility in modifying the sheet layout without breaking the script.
+ *
+ * Assumptions:
+ * - The main sheet has consistent column headers.
+ * - The TC sheet exists and is properly formatted to accept the moved records.
+ *
+ * Version 2.0 (Updated to use header names for more flexibility).
+ */
+
 function onEdit(e) {
   const sheet = e.range.getSheet();
   const editedRow = e.range.getRow();

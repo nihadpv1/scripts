@@ -1,3 +1,21 @@
+/**
+ * Google Apps Script for moving student records to the Transfer Certificate (TC) sheet.
+ *
+ * This script is triggered on every edit made in the main student sheet. It identifies the student record
+ * based on the index number and automatically moves it to the TC sheet.
+ *
+ * Key Features:
+ * - Listens for edits in the main sheet.
+ * - Moves data from the main sheet to the TC sheet based on a unique index number.
+ * - Preserves the format and content of the student record.
+ *
+ * Assumptions:
+ * - The index number is unique for each student.
+ * - The TC sheet exists and is properly formatted to accept the moved records.
+ *
+ * Version 1.0 (Initial version).
+ */
+
 function onEdit(e) {
   const sheet = e.range.getSheet();
   const editedColumn = e.range.getColumn();
